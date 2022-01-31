@@ -5,7 +5,7 @@ import { Table } from 'react-bootstrap';
 
 function App() {
 
-  const [userData, setUserData] = useState();
+  const [userData, setUserData] = useState([]);
   const [refreshCount, setRefreshCount] = useState(0);
 
   useEffect(() => {
@@ -19,7 +19,6 @@ function App() {
           let { results } = res.data;
           if(localStorage.getItem("userinfo")) {
             let ls = JSON.parse(localStorage.getItem("userinfo"));
-            console.log(ls, "kaisa?????")
             ls = [...ls, ...results];
             setUserData(ls);
             localStorage.setItem("userinfo", JSON.stringify(ls));
@@ -35,7 +34,12 @@ function App() {
         setUserData([]);
         console.log(err);
       });
-  }, [refreshCount])
+  }, [refreshCount]);
+
+  const handleClearLocalStorage = () => {
+    localStorage.removeItem("userinfo");
+    setUserData([]);
+  };
 
   return (
     <div className="App">
@@ -52,19 +56,24 @@ function App() {
           />
         </button>
       </h1>
-      <h5>{`Refreshed ${refreshCount} times`}</h5>
+      <h5>
+        {`Refreshed ${refreshCount} times`}&nbsp;
+        <button
+          onClick={handleClearLocalStorage}
+        >Clear LStorage</button>
+      </h5>
       <Table striped bordered hover>
         <thead>
           <tr>
             <th>Full Name</th>
             <th>Email</th>
           </tr>
-        </thead>{console.log(userData)}
+        </thead>
         <tbody>
           {userData && 
             userData.length > 0 &&
             userData.map((user,index) => (
-              <tr key={user.id.value}>
+              <tr key={index}>
                 <td>
                   {`${user.name.title} ${user.name.first} ${user.name.last}`}
                 </td>
